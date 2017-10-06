@@ -1,0 +1,18 @@
+version: '2'
+services:
+  web-inventory:
+    labels:
+      traefik.domain: local,internal
+      traefik.port: '8080'
+      traefik.enable: 'true'
+      traefik.alias: 'web1,web2'
+      traefik.acme: 'false'
+      traefik.sticky: 'false'
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    tty: true
+    image: rawmind/web-inventory
+  web-lb:
+    image: rancher/lb-service-haproxy:v0.7.6
+    ports:
+    - 9080/tcp
