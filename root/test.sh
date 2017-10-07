@@ -11,7 +11,7 @@ function checkError {
 rc=0 
 
 echo "Starting service ${SERVICE_NAME}"
-/opt/web-monolith/web-monolith &
+/opt/web-inventory/web-inventory &
 SERVICE_PID=$!
 
 sleep 5
