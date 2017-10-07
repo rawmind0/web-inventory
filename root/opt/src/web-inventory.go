@@ -7,11 +7,11 @@ import (
 )
 
 func inventoryHandler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintln(w, "Inventory microservice version", os.Getenv("VERSION"))
+    fmt.Fprintln(w, "Inventory microservice version", os.Getenv("SERVICE_VERSION"))
 }
 
 func main() {
-	fmt.Println("Starting web-inventory version", os.Getenv("VERSION"))
+	fmt.Println("Starting web-inventory version", os.Getenv("SERVICE_VERSION"))
     http.HandleFunc("/", inventoryHandler)
     http.ListenAndServe(":8080", nil)
 }

@@ -1,7 +1,7 @@
 web-inventory
 ============
 
-This image runs a web service in 8080 port, used for show micorservice concept. It comes from rawmind/alpine-base.
+This image runs a web service in 8080 port, used for show microservice concept. It comes from rawmind/alpine-base.
 
 ## Build
 
@@ -11,7 +11,7 @@ docker build -t rawmind/web-inventory:<version> .
 
 ## Versions
 
-- `0.1` [(Dockerfile)](https://github.com/rawmind0/web-inventory/blob/0.1/Dockerfile)
+- `0.1-1` [(Dockerfile)](https://github.com/rawmind0/web-inventory/blob/0.1-1/Dockerfile)
 
 
 ## Usage
