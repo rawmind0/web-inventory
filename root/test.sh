@@ -17,16 +17,14 @@ SERVICE_PID=$!
 sleep 5
 
 echo "Testing service ${SERVICE_NAME}"
-CURRENT_VERSION=$(curl -sS localhost:8080)
+CURRENT_VERSION=$(curl -sS localhost:8080 | jq -r .version)
 if [ $? -ne 0 ]; then
 	sleep 5
-	CURRENT_VERSION=$(curl -sS localhost:8080)
+	CURRENT_VERSION=$(curl -sS localhost:8080 | jq -r .version)
 fi
 
-SERVICE_EXPECTED="Inventory microservice version ${SERVICE_VERSION}"
-
-if [ "$CURRENT_VERSION" != "$SERVICE_EXPECTED" ]; then
-        echo "ERROR got $CURRENT_VERSION expected $SERVICE_EXPECTED"
+if [ "$CURRENT_VERSION" != "$SERVICE_TAG" ]; then
+        echo "ERROR got $CURRENT_VERSION expected $SERVICE_TAG"
         rc=1
 fi
 

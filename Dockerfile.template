@@ -6,8 +6,30 @@ if [ -n "$1" ]; then
 	fi
 fi
 
+function getRev {
+  BUILD_VER=$(git tag --sort v:refname -l ${1}-* | tail -1)
+  if [ -z "${BUILD_VER}" ]; then 
+    rev=0
+  else
+    rev=$(echo ${BUILD_VER} | cut -d"-" -f2)
+    if [ -z "${rev}" ]; then
+      rev=0
+    else
+        ((rev++))
+      fi
+  fi
+  echo $rev
+}
+
 DOCKER_FILE=${DOCKER_FILE:-"Dockerfile"}
-DOCKER_FROM=${DOCKER_FROM:-"rawmind/alpine-base:3.6-0"}
+DOCKER_FROM=${DOCKER_FROM:-"rawmind/alpine-base:3.15-2"}
+VERSION=${VERSION:-$(cat version)}
+GO_SOURCE="github.com/rawmind0/web-inventory"
+
+if [ -z "${TAG}" ]; then
+  REVISION=$(getRev ${VERSION})
+  TAG=${VERSION}"-"${REVISION}
+fi
 
 echo "Generating ${DOCKER_FILE} with FROM ${DOCKER_FROM} ..."
 
@@ -17,7 +39,7 @@ MAINTAINER Raul Sanchez <rawmind@gmail.com>
 
 ENV SERVICE_HOME=/opt/web-inventory \
     SERVICE_NAME=web-inventory \
-    SERVICE_VERSION=0.1 \
+    SERVICE_TAG=${TAG} \
     GOMAXPROCS=2 \
     GOROOT=/usr/lib/go \
     GOPATH=/opt/src \
@@ -25,12 +47,12 @@ ENV SERVICE_HOME=/opt/web-inventory \
 ENV PATH=\$PATH:\$SERVICE_HOME
 
 # Add service files
-ADD root /
+ADD root/src /opt/src/github.com/rawmind0/web-inventory
+ADD root/test.sh /tmp/
 
-RUN apk add --update go git musl-dev \ 
-  && mkdir -p /opt/src \${SERVICE_HOME}; cd /opt/src \
-  && cd /opt/src \
-  && go build -o \${SERVICE_NAME} \
+RUN apk add --update go git musl-dev jq \ 
+  && mkdir -p /opt/src/${GO_SOURCE} \${SERVICE_HOME}; cd /opt/src/${GO_SOURCE} \
+  && CGO_ENABLED=0 go build -ldflags "-X main.VERSION=\${SERVICE_TAG} -extldflags -static -s" -o \${SERVICE_NAME} \
   && mv ./\${SERVICE_NAME} \${SERVICE_HOME}; cd \${SERVICE_HOME} \
   && chmod +x \${SERVICE_HOME}/\${SERVICE_NAME} \
   && apk del go git musl-dev \

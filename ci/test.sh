@@ -19,7 +19,7 @@ if [ "$exist_image" -ne "1" ]; then
 fi
 
 log "Running ${DOCKER_IMAGE} ..."
-docker run -t --rm --entrypoint=/test.sh ${DOCKER_IMAGE}
+docker run -t --rm --entrypoint=/tmp/test.sh ${DOCKER_IMAGE}
 checkError $?
 
 log "OK"
